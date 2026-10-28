@@ -45,3 +45,32 @@ Ordningen i listan är inte bestämd i specen. Del 2 väljer och skriver det hä
 
 - `fel` är ett allmänt meddelande som kan visas överst. `faltfel` är ett meddelande per fält och visas vid respektive fält. Alla fel i samma begäran skickas tillsammans.
 - Meddelandena i specen är exakta, t.ex. `Rubrik måste fyllas i`, `Deadline måste fyllas i`, `Deadline kan inte ligga före dagens datum`. Övriga meddelanden (längdgränser, ogiltig status m.fl.) bestämmer Del 1 respektive Del 2 – skriv in dem här när de är beslutade.
+
+## Valideringsmeddelanden (Del 1)
+
+Gäller `POST /api/arenden` och återanvänds av Del 2 vid ändring. Källa: `backend/src/validation/fields.js`, testade i `backend/tests/fields.test.js`.
+
+| Fält          | Fel                                   | `faltfel`-meddelande                                                  |
+| ------------- | ------------------------------------- | --------------------------------------------------------------------- |
+| `rubrik`      | saknas eller enbart blanktecken       | `Rubrik måste fyllas i`                                               |
+| `rubrik`      | över 100 tecken                       | `Rubrik får vara högst 100 tecken`                                    |
+| `rubrik`      | inte text                             | `Rubrik måste vara text`                                              |
+| `beskrivning` | saknas eller enbart blanktecken       | `Beskrivning måste fyllas i`                                          |
+| `beskrivning` | över 5000 tecken                      | `Beskrivning får vara högst 5000 tecken`                              |
+| `beskrivning` | inte text                             | `Beskrivning måste vara text`                                         |
+| `kategori`    | saknas                                | `Kategori måste fyllas i`                                             |
+| `kategori`    | inte en av kategorierna               | `Kategori måste vara en av kategorierna i listan`                     |
+| `prioritet`   | saknas                                | `Prioritet måste fyllas i`                                            |
+| `prioritet`   | inte ett heltal 1–5                   | `Prioritet måste vara ett heltal från 1 till 5`                       |
+| `status`      | saknas                                | `Status måste fyllas i`                                               |
+| `status`      | inte en av statusarna                 | `Status måste vara en av: Nytt, Pågående, Väntar på kund, Avslutat`   |
+| `deadline`    | saknas                                | `Deadline måste fyllas i`                                             |
+| `deadline`    | inte ett riktigt datum `YYYY-MM-DD`   | `Deadline måste vara ett giltigt datum (ÅÅÅÅ-MM-DD)`                  |
+| `deadline`    | före dagens datum                     | `Deadline kan inte ligga före dagens datum`                           |
+
+- `prioritet` skickas som JSON-tal (`3`), inte som sträng (`"3"`). En `<select>` ger strängar, så frontend skickar `Number(value)`.
+- Längden räknas utan blanktecken före och efter, i UTF-16-enheter (`text.length`). Det är samma räkning som `maxlength` i HTML. En emoji som 😀 räknas som 2 tecken.
+- `arendenummer`: löpnumret börjar om från 1 varje nytt år, i svensk tid: … `2026-57`, `2027-1`.
+- `rubrik` och `beskrivning` sparas utan blanktecken före och efter.
+- `arendenummer`, `skapad` och okända fält i `POST`-kroppen ignoreras: systemet sätter dem.
+- "Dagens datum" (AK7, AK8) och årtalet i `arendenummer` räknas i svensk tid, oavsett serverns tidszon.
