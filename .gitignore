@@ -1,2 +1,5 @@
 node_modules/
 .DS_Store
+
+# Databasen skapas av servern (npm start) och innehåller lokala testärenden. Den ska inte checkas in.
+backend/data/*.db

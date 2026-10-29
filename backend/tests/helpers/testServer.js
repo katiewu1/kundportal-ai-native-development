@@ -5,8 +5,9 @@ import http from 'node:http';
 import { createApp } from '../../src/app.js';
 import { openDatabase } from '../../src/db.js';
 
-// Fast "nu": 2 november 2026 kl 10:00 (lokal tid). Används för deadline-tester (AK7, AK8).
-export const FIXED_NOW = new Date(2026, 10, 2, 10, 0, 0);
+// Fast "nu": 2 november 2026 kl 10:00 svensk tid (09:00 UTC). Används för deadline-tester (AK7, AK8).
+// Anges i UTC, så att TODAY stämmer oavsett vilken tidszon datorn som kör testerna står på.
+export const FIXED_NOW = new Date('2026-11-02T09:00:00Z');
 export const TODAY = '2026-11-02';
 export const YESTERDAY = '2026-11-01';
 export const TOMORROW = '2026-11-03';
