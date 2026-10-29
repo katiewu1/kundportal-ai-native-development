@@ -18,7 +18,7 @@
         font-family:
           system-ui,
           -apple-system,
-          "Segoe UI",
+          'Segoe UI',
           Roboto,
           sans-serif;
         color: var(--text);
@@ -56,7 +56,7 @@
         color: var(--text);
         cursor: pointer;
       }
-      nav button[aria-current="page"] {
+      nav button[aria-current='page'] {
         background: var(--accent);
         border-color: var(--accent);
         color: #fff;
@@ -89,7 +89,7 @@
         color: var(--error);
         font-size: 0.9rem;
       }
-      [aria-invalid="true"] {
+      [aria-invalid='true'] {
         border-color: var(--error);
       }
       #global-message {
@@ -100,7 +100,7 @@
         background: #fdecea;
         color: var(--error);
       }
-      #global-message[data-kind="ok"] {
+      #global-message[data-kind='ok'] {
         border-color: var(--ok);
         background: #e8f5ee;
         color: var(--ok);
@@ -142,6 +142,124 @@
         margin: 0;
         color: var(--muted);
       }
+      .case-row {
+        cursor: pointer;
+      }
+      .case-row:hover {
+        background: #f7f9fb;
+      }
+      .case-row:focus,
+      .case-row.is-focused {
+        outline: 3px solid var(--accent);
+        outline-offset: -3px;
+      }
+      .case-row:focus td,
+      .case-row.is-focused td {
+        background: #e7f0fa;
+      }
+      html.detail-open,
+      body.detail-open {
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+      #view-detail:not([hidden]) {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: auto;
+        max-width: none;
+        margin: 0;
+        padding: 0.75rem;
+        border: 0;
+        border-radius: 0;
+        background: rgba(27, 39, 51, 0.45);
+        overflow: hidden;
+      }
+      .detail-dialog {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        width: min(40rem, 100%);
+        max-height: 100%;
+        min-height: 0;
+        overflow: hidden;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.25rem 1.5rem;
+        box-shadow: 0 12px 40px rgba(27, 39, 51, 0.18);
+      }
+      .detail-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex: 0 0 auto;
+      }
+      .detail-close {
+        flex: 0 0 auto;
+        width: 2.75rem;
+        height: 2.75rem;
+        margin: -0.4rem -0.4rem 0 0;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .detail-close:hover {
+        background: #f7f9fb;
+      }
+      .detail-body {
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+      .detail-fields {
+        display: grid;
+        grid-template-columns: minmax(7.5rem, 11rem) minmax(0, 1fr);
+        gap: 0.65rem 1rem;
+        margin: 0;
+      }
+      .detail-fields dt {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .detail-fields dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+      .detail-status,
+      .detail-error {
+        margin: 0;
+      }
+      .detail-error {
+        color: var(--error);
+      }
+      @media (max-width: 40rem) {
+        #view-detail:not([hidden]) {
+          padding: 0.5rem;
+        }
+        .detail-dialog {
+          padding: 1rem;
+        }
+        .detail-fields {
+          grid-template-columns: 1fr;
+          gap: 0.15rem 0;
+        }
+        .detail-fields dd {
+          margin-bottom: 0.75rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -159,9 +277,7 @@
       <!-- ===== DEL 3: Registrera ärende (AK1–AK8) ===== -->
       <section id="view-new" data-view="new" aria-labelledby="h-new" hidden>
         <h2 id="h-new">Registrera nytt ärende</h2>
-        <p class="placeholder">
-          Inte byggt ännu. Ägs av Del 3 (formulär för AK1–AK8).
-        </p>
+        <p class="placeholder">Inte byggt ännu. Ägs av Del 3 (formulär för AK1–AK8).</p>
         <!--
         Kontrakt för formuläret:
           - fältnamn (name=…): rubrik, beskrivning, kategori, prioritet, status, deadline
@@ -177,22 +293,19 @@
       </section>
 
       <!-- ===== DEL 4: Detalj, ändra status och redigera (AK11–AK16) ===== -->
-      <section
-        id="view-detail"
-        data-view="detail"
-        aria-labelledby="h-detail"
-        hidden
-      >
-        <h2 id="h-detail">Ärende</h2>
-        <p class="placeholder">
-          Inte byggt ännu. Ägs av Del 4 (detalj, status och redigering för
-          AK11–AK16).
-        </p>
+      <section id="view-detail" data-view="detail" hidden>
+        <div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="h-detail">
+          <div class="detail-header">
+            <h2 id="h-detail">Ärende</h2>
+            <button type="button" class="detail-close" aria-label="Stäng">×</button>
+          </div>
+          <div id="case-detail" class="detail-body"></div>
+        </div>
       </section>
     </main>
 
     <script>
-      "use strict";
+      'use strict';
 
       /* ================================================================
        DELAT SKELETT – ändras bara via en liten, granskad PR.
@@ -203,15 +316,15 @@
       // ett test som jämför dem vore en bra liten uppgift.
       const PORTAL_CONFIG = Object.freeze({
         KATEGORIER: [
-          "Anmälan och inskrivning",
-          "Aktivitetsrapport",
-          "Ersättning och stöd",
-          "Jobb och sökning",
-          "Utbildning och insatser",
-          "Digital tjänst och inloggning",
-          "Övrigt",
+          'Anmälan och inskrivning',
+          'Aktivitetsrapport',
+          'Ersättning och stöd',
+          'Jobb och sökning',
+          'Utbildning och insatser',
+          'Digital tjänst och inloggning',
+          'Övrigt',
         ],
-        STATUSAR: ["Nytt", "Pågående", "Väntar på kund", "Avslutat"],
+        STATUSAR: ['Nytt', 'Pågående', 'Väntar på kund', 'Avslutat'],
         PRIORITETER: [1, 2, 3, 4, 5],
         RUBRIK_MAX: 100,
         BESKRIVNING_MAX: 5000,
@@ -225,10 +338,7 @@
         try {
           const res = await fetch(path, {
             method,
-            headers:
-              body === undefined
-                ? undefined
-                : { "Content-Type": "application/json" },
+            headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
             body: body === undefined ? undefined : JSON.stringify(body),
           });
           let data = null;
@@ -243,39 +353,38 @@
             ok: false,
             status: 0,
             data: {
-              fel: "Kunde inte nå servern. Kontrollera att den är igång.",
+              fel: 'Kunde inte nå servern. Kontrollera att den är igång.',
             },
           };
         }
       }
 
       function showView(name, arg) {
-        document.querySelectorAll("[data-view]").forEach((el) => {
+        document.querySelectorAll('[data-view]').forEach((el) => {
           el.hidden = el.dataset.view !== name;
         });
-        document.querySelectorAll("[data-nav]").forEach((btn) => {
+        document.querySelectorAll('[data-nav]').forEach((btn) => {
           // "detail" hör till menyvalet Ärenden
-          const active =
-            btn.dataset.nav === (name === "detail" ? "list" : name);
-          if (active) btn.setAttribute("aria-current", "page");
-          else btn.removeAttribute("aria-current");
+          const active = btn.dataset.nav === (name === 'detail' ? 'list' : name);
+          if (active) btn.setAttribute('aria-current', 'page');
+          else btn.removeAttribute('aria-current');
         });
         clearGlobalMessage();
-        if (name === "new") onShowNewView();
-        if (name === "list") onShowListView();
-        if (name === "detail") onShowDetailView(arg);
+        if (name === 'new') onShowNewView();
+        if (name === 'list') onShowListView();
+        if (name === 'detail') onShowDetailView(arg);
       }
 
-      function showGlobalMessage(text, kind = "error") {
-        const el = document.getElementById("global-message");
+      function showGlobalMessage(text, kind = 'error') {
+        const el = document.getElementById('global-message');
         el.textContent = text;
         el.dataset.kind = kind;
         el.hidden = false;
       }
       function clearGlobalMessage() {
-        const el = document.getElementById("global-message");
+        const el = document.getElementById('global-message');
         el.hidden = true;
-        el.textContent = "";
+        el.textContent = '';
       }
 
       /** Skriver ut fältfel intill rätt fält: <span data-error-for="rubrik"> + aria-invalid på [name="rubrik"]. */
@@ -285,16 +394,14 @@
           const out = form.querySelector(`[data-error-for="${falt}"]`);
           const input = form.querySelector(`[name="${falt}"]`);
           if (out) out.textContent = meddelande;
-          if (input) input.setAttribute("aria-invalid", "true");
+          if (input) input.setAttribute('aria-invalid', 'true');
         }
       }
       function clearFieldErrors(form) {
-        form.querySelectorAll("[data-error-for]").forEach((el) => {
-          el.textContent = "";
+        form.querySelectorAll('[data-error-for]').forEach((el) => {
+          el.textContent = '';
         });
-        form
-          .querySelectorAll("[aria-invalid]")
-          .forEach((el) => el.removeAttribute("aria-invalid"));
+        form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
       }
 
       /* ================================================================
@@ -316,66 +423,115 @@
        ================================================================ */
 
       const LIST_FIELD_LABELS = {
-        arendenummer: "Ärendenummer",
-        rubrik: "Rubrik",
-        beskrivning: "Beskrivning",
-        kategori: "Kategori",
-        prioritet: "Prioritet",
-        status: "Status",
-        skapad: "Skapad",
-        deadline: "Deadline",
+        arendenummer: 'Ärendenummer',
+        rubrik: 'Rubrik',
+        beskrivning: 'Beskrivning',
+        kategori: 'Kategori',
+        prioritet: 'Prioritet',
+        status: 'Status',
+        skapad: 'Skapad',
+        deadline: 'Deadline',
       };
-      const DEFAULT_LIST_FIELDS = [
-        "arendenummer",
-        "rubrik",
-        "prioritet",
-        "status",
-        "deadline",
-      ];
+      const DEFAULT_LIST_FIELDS = ['arendenummer', 'rubrik', 'prioritet', 'status', 'deadline'];
+
+      let detailRequest = 0;
+      let detailTrigger = null;
+
+      function setDetailScrollLock(locked) {
+        document.documentElement.classList.toggle('detail-open', locked);
+        document.body.classList.toggle('detail-open', locked);
+      }
+
+      function focusCaseRow(row) {
+        if (!row || !row.isConnected) return;
+        document.querySelectorAll('#case-list .case-row.is-focused').forEach((el) => {
+          if (el !== row) el.classList.remove('is-focused');
+        });
+        row.classList.add('is-focused');
+        try {
+          row.focus({ focusVisible: true });
+        } catch {
+          row.focus();
+        }
+      }
+
+      function closeDetailView() {
+        detailRequest += 1;
+        const trigger = detailTrigger;
+        detailTrigger = null;
+        // Stäng-knappen försvinner vid musklick. Fokus sätts på raden innan dess,
+        // och en gång till efteråt så att webbläsaren inte lämnar fokus på sidan.
+        focusCaseRow(trigger);
+        document.getElementById('view-detail').hidden = true;
+        setDetailScrollLock(false);
+        setTimeout(() => focusCaseRow(trigger), 0);
+      }
+
+      function openCaseFromRow(row) {
+        detailTrigger = row;
+        onShowDetailView(row.dataset.arendenummer);
+      }
 
       function initCaseViews() {
-        // TODO Del 4: koppla klick på ett ärende i listan till showView('detail', arendenummer).
+        const list = document.getElementById('case-list');
+        list.addEventListener('click', (event) => {
+          const row = event.target.closest('tr[data-arendenummer]');
+          if (!row) return;
+          openCaseFromRow(row);
+        });
+        list.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          const row = event.target.closest('tr[data-arendenummer]');
+          if (!row) return;
+          event.preventDefault();
+          openCaseFromRow(row);
+        });
+        list.addEventListener('focusin', (event) => {
+          const row = event.target.closest('tr.case-row');
+          if (!row) return;
+          document.querySelectorAll('#case-list .case-row.is-focused').forEach((el) => {
+            if (el !== row) el.classList.remove('is-focused');
+          });
+          row.classList.add('is-focused');
+        });
+
+        const detail = document.getElementById('view-detail');
+        detail.addEventListener('click', (event) => {
+          if (event.target.closest('.detail-dialog')) return;
+          closeDetailView();
+        });
+        detail.querySelector('.detail-close').addEventListener('click', (event) => {
+          event.stopPropagation();
+          closeDetailView();
+        });
+        document.addEventListener('keydown', (event) => {
+          if (event.key !== 'Escape') return;
+          if (detail.hidden) return;
+          event.preventDefault();
+          closeDetailView();
+        });
+
+        document.querySelectorAll('[data-nav]').forEach((btn) => {
+          btn.addEventListener('click', () => setDetailScrollLock(false));
+        });
       }
 
       async function onShowListView() {
-        const FALL_A = {
-          arendenummer: "2026-1",
-          rubrik: "Kan inte logga in",
-          beskrivning: "Kunden får felmeddelande vid inloggning.",
-          kategori: "Digital tjänst och inloggning",
-          prioritet: 3,
-          status: "Nytt",
-          skapad: "2026-11-02T09:00:00.000Z",
-          deadline: "2026-11-30",
-        };
+        setDetailScrollLock(false);
 
-        const FALL_B = {
-          arendenummer: "2026-2",
-          rubrik: "Saknar aktivitetsrapport",
-          beskrivning: "Kunden undrar hur rapporten skickas in.",
-          kategori: "Aktivitetsrapport",
-          prioritet: 2,
-          status: "Pågående",
-          skapad: "2026-11-03T10:00:00.000Z",
-          deadline: "2026-12-01",
-        };
-
-        const container = document.getElementById("case-list");
+        const container = document.getElementById('case-list');
         container.replaceChildren();
 
-        // Temporary test data instead of calling the API
-        // const res = { ok: true, data: [FALL_A, FALL_B] };
-
-        const res = await api("GET", "/api/arenden");
+        const res = await api('GET', '/api/arenden');
         if (!res.ok || !Array.isArray(res.data)) {
-          showGlobalMessage(res.data?.fel || "Kunde inte hämta ärenden.");
+          showGlobalMessage(res.data?.fel || 'Kunde inte hämta ärenden.');
           return;
         }
 
         if (res.data.length === 0) {
-          const empty = document.createElement("p");
-          empty.className = "case-list-empty";
-          empty.textContent = "Inga ärenden ännu.";
+          const empty = document.createElement('p');
+          empty.className = 'case-list-empty';
+          empty.textContent = 'Inga ärenden ännu.';
           container.append(empty);
           return;
         }
@@ -384,28 +540,33 @@
       }
 
       function renderCaseTable(container, cases, fields) {
-        const wrap = document.createElement("div");
-        wrap.className = "case-table-wrap";
-        const table = document.createElement("table");
-        table.className = "case-table";
+        const wrap = document.createElement('div');
+        wrap.className = 'case-table-wrap';
+        const table = document.createElement('table');
+        table.className = 'case-table';
 
-        const thead = document.createElement("thead");
-        const headRow = document.createElement("tr");
+        const thead = document.createElement('thead');
+        const headRow = document.createElement('tr');
         for (const field of fields) {
-          const th = document.createElement("th");
-          th.scope = "col";
+          const th = document.createElement('th');
+          th.scope = 'col';
           th.textContent = LIST_FIELD_LABELS[field] || field;
           headRow.append(th);
         }
         thead.append(headRow);
 
-        const tbody = document.createElement("tbody");
+        const tbody = document.createElement('tbody');
         for (const arende of cases) {
-          const tr = document.createElement("tr");
+          const tr = document.createElement('tr');
+          if (arende.arendenummer != null) {
+            tr.dataset.arendenummer = String(arende.arendenummer);
+            tr.classList.add('case-row');
+            tr.tabIndex = 0;
+          }
           for (const field of fields) {
-            const td = document.createElement("td");
+            const td = document.createElement('td');
             const value = arende[field];
-            td.textContent = value == null ? "" : String(value);
+            td.textContent = value == null ? '' : String(value);
             tr.append(td);
           }
           tbody.append(tr);
@@ -415,9 +576,72 @@
         wrap.append(table);
         container.append(wrap);
       }
-      function onShowDetailView(arendenummer) {
-        // TODO Del 4: hämta api('GET', `/api/arenden/${encodeURIComponent(arendenummer)}`), visa alla fält,
-        //             statusbyte (PATCH /api/arenden/:arendenummer/status) och redigering (PATCH /api/arenden/:arendenummer).
+      const DETAIL_FIELDS = [
+        'arendenummer',
+        'rubrik',
+        'beskrivning',
+        'kategori',
+        'prioritet',
+        'status',
+        'skapad',
+        'deadline',
+      ];
+
+      function formatCreatedAt(value) {
+        if (value == null || value === '') return '';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+        return new Intl.DateTimeFormat('sv-SE', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        }).format(date);
+      }
+
+      function renderCaseDetail(container, arende) {
+        const dl = document.createElement('dl');
+        dl.className = 'detail-fields';
+        for (const field of DETAIL_FIELDS) {
+          const dt = document.createElement('dt');
+          dt.textContent = LIST_FIELD_LABELS[field] || field;
+          const dd = document.createElement('dd');
+          const value = arende[field];
+          dd.textContent =
+            field === 'skapad' ? formatCreatedAt(value) : value == null ? '' : String(value);
+          dl.append(dt, dd);
+        }
+        container.append(dl);
+      }
+
+      async function onShowDetailView(arendenummer) {
+        const requestId = ++detailRequest;
+        const detail = document.getElementById('view-detail');
+        const host = document.getElementById('case-detail');
+        detail.hidden = false;
+        setDetailScrollLock(true);
+        clearGlobalMessage();
+        detail.querySelector('.detail-close').focus();
+        host.replaceChildren();
+
+        const loading = document.createElement('p');
+        loading.className = 'detail-status';
+        loading.textContent = 'Hämtar ärende…';
+        host.append(loading);
+
+        const res = await api('GET', `/api/arenden/${encodeURIComponent(arendenummer)}`);
+        if (requestId !== detailRequest) return;
+
+        host.replaceChildren();
+        if (!res.ok || res.data == null || typeof res.data !== 'object') {
+          const error = document.createElement('p');
+          error.className = 'detail-error';
+          error.textContent = res.data?.fel || 'Kunde inte hämta ärendet.';
+          host.append(error);
+          return;
+        }
+        renderCaseDetail(host, res.data);
       }
 
       /* ================================================================
@@ -425,12 +649,12 @@
        ================================================================ */
 
       function init() {
-        document.querySelectorAll("[data-nav]").forEach((btn) => {
-          btn.addEventListener("click", () => showView(btn.dataset.nav));
+        document.querySelectorAll('[data-nav]').forEach((btn) => {
+          btn.addEventListener('click', () => showView(btn.dataset.nav));
         });
         initNewCaseView();
         initCaseViews();
-        showView("list");
+        showView('list');
       }
 
       // Gör hjälpfunktionerna åtkomliga för tester och webbläsarens konsol.
@@ -444,8 +668,7 @@
         clearFieldErrors,
       };
 
-      if (document.readyState === "loading")
-        document.addEventListener("DOMContentLoaded", init);
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
       else init();
     </script>
   </body>
