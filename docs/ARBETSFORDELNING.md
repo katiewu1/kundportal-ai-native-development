@@ -150,6 +150,5 @@ API.md             ──►  Del 3 och 4 kan bygga mot låtsassvar tills backen
 Uppgiften kräver också följande från gruppen. Fördela dem så att alla bidrar:
 
 - Verifieringsplanen (`docs/verifieringsplan.md`, finns som mall) och körresultat.
-- Veckostatus (planerat, genomfört, verifierat, osäkert, nästa steg), sparas i `docs/`.
 - Det gemensamma AI-arbetssättet. `AGENTS.md` är en första version. Utveckla den tillsammans.
 - Att granska varandras PR:er. Varje person ska granska minst en kamrats förändring.
