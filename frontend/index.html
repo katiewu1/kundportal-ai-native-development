@@ -61,6 +61,19 @@
         border-color: var(--accent);
         color: #fff;
       }
+      @media (max-width: 40rem) {
+        .topbar {
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          padding: 0.75rem 1rem;
+        }
+        nav {
+          flex-wrap: wrap;
+        }
+        nav button {
+          white-space: nowrap;
+        }
+      }
       main {
         max-width: 60rem;
         margin: 1.5rem auto;
@@ -120,10 +133,11 @@
 
       /* ===== DEL 4 – CSS för lista, detalj, status och redigering: lägg till här ===== */
       .case-table-wrap {
-        overflow-x: auto;
+        overflow-x: hidden;
       }
       .case-table {
         width: 100%;
+        table-layout: fixed;
         border-collapse: collapse;
         font-size: 0.95rem;
       }
@@ -137,6 +151,32 @@
       .case-table th {
         font-weight: 600;
         color: var(--muted);
+      }
+      .case-table th[data-field='arendenummer'],
+      .case-table td[data-field='arendenummer'] {
+        width: 18%;
+      }
+      .case-table th[data-field='prioritet'],
+      .case-table td[data-field='prioritet'] {
+        width: 12%;
+      }
+      .case-table th[data-field='status'],
+      .case-table td[data-field='status'] {
+        width: 18%;
+      }
+      .case-table th[data-field='deadline'],
+      .case-table td[data-field='deadline'] {
+        width: 18%;
+      }
+      .case-clip {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+      .case-table td[data-field='rubrik'] .case-clip {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
       }
       .case-list-empty {
         margin: 0;
@@ -156,6 +196,145 @@
       .case-row:focus td,
       .case-row.is-focused td {
         background: #e7f0fa;
+      }
+      @media (max-width: 40rem) {
+        #view-list {
+          padding: 1rem 1rem 0.35rem;
+        }
+        .case-table,
+        .case-table tbody,
+        .case-table tr,
+        .case-table td {
+          display: block;
+          width: auto;
+        }
+        .case-table thead {
+          display: none;
+        }
+        .case-table th[data-field],
+        .case-table td[data-field] {
+          width: auto;
+        }
+        .case-table tr.case-row {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          grid-template-areas:
+            'rubrik rubrik'
+            'nummer status'
+            'prio deadline';
+          column-gap: 0.75rem;
+          row-gap: 0.15rem;
+          margin: 0.2rem 0.15rem;
+          padding: 0.8rem 0.9rem;
+          border: 0;
+          border-bottom: 1px solid var(--border);
+          border-radius: 0;
+        }
+        .case-table tr.case-row:last-child {
+          border-bottom: 0;
+        }
+        .case-table tr.case-row:hover {
+          background: #f7f9fb;
+          border-radius: 8px;
+        }
+        .case-row:focus td,
+        .case-row.is-focused td {
+          background: transparent;
+        }
+        .case-row:focus,
+        .case-row.is-focused {
+          background: #e7f0fa;
+          border-radius: 8px;
+        }
+        .case-table td {
+          border: 0;
+          padding: 0;
+          min-width: 0;
+        }
+        .case-table td::before {
+          content: none;
+        }
+        .case-table td[data-field='rubrik'] {
+          grid-area: rubrik;
+          color: var(--text);
+          font-weight: 600;
+          font-size: 1rem;
+          line-height: 1.35;
+        }
+        .case-table td[data-field='arendenummer'] {
+          grid-area: nummer;
+          color: var(--muted);
+          font-size: 0.82rem;
+        }
+        .case-table td[data-field='status'] {
+          grid-area: status;
+          justify-self: end;
+          align-self: center;
+        }
+        .case-table td[data-field='status'] .case-clip {
+          display: inline-block;
+          padding: 0.08rem 0.5rem;
+          border-radius: 999px;
+          background: #e8eef5;
+          color: var(--text);
+          font-size: 0.75rem;
+          font-weight: 600;
+          line-height: 1.45;
+        }
+        .case-table td[data-field='prioritet'] {
+          grid-area: prio;
+          color: var(--muted);
+          font-size: 0.82rem;
+        }
+        .case-table td[data-field='prioritet']::before {
+          content: 'Prio ';
+        }
+        .case-table td[data-field='deadline'] {
+          grid-area: deadline;
+          justify-self: end;
+          color: var(--muted);
+          font-size: 0.82rem;
+        }
+        .case-table td .case-clip {
+          display: inline;
+          min-width: 0;
+          overflow: visible;
+          overflow-wrap: normal;
+          -webkit-line-clamp: unset;
+        }
+        .case-table td[data-field='rubrik'] .case-clip {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+        }
+      }
+      @media (min-width: 40.0625rem) and (max-width: 52rem) {
+        .case-table th,
+        .case-table td {
+          padding: 0.5rem 0.45rem;
+          overflow: hidden;
+        }
+        .case-table th {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        .case-table th[data-field='arendenummer'],
+        .case-table td[data-field='arendenummer'] {
+          width: 9.25rem;
+        }
+        .case-table th[data-field='prioritet'],
+        .case-table td[data-field='prioritet'] {
+          width: 4.75rem;
+        }
+        .case-table th[data-field='status'],
+        .case-table td[data-field='status'] {
+          width: 6.5rem;
+        }
+        .case-table th[data-field='deadline'],
+        .case-table td[data-field='deadline'] {
+          width: 6.75rem;
+        }
       }
       html.detail-open,
       body.detail-open {
@@ -550,6 +729,7 @@
         for (const field of fields) {
           const th = document.createElement('th');
           th.scope = 'col';
+          th.dataset.field = field;
           th.textContent = LIST_FIELD_LABELS[field] || field;
           headRow.append(th);
         }
@@ -566,7 +746,14 @@
           for (const field of fields) {
             const td = document.createElement('td');
             const value = arende[field];
-            td.textContent = value == null ? '' : String(value);
+            const text = value == null ? '' : String(value);
+            td.dataset.field = field;
+            td.dataset.label = LIST_FIELD_LABELS[field] || field;
+            const clip = document.createElement('span');
+            clip.className = 'case-clip';
+            clip.textContent = text;
+            if (text) clip.title = text;
+            td.append(clip);
             tr.append(td);
           }
           tbody.append(tr);
