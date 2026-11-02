@@ -3,7 +3,7 @@
 // Arbetssätt: gör en `it.todo` till ett riktigt test, kör det (rött), låt implementationen bli grön.
 // Hjälpare: startTestServer(), validCase(), TODAY / YESTERDAY / TOMORROW – se tests/helpers/testServer.js
 //
-// "Inget sparas" kontrolleras direkt i databasen, eftersom GET /api/arenden byggs av Del 2.
+// "Inget sparas" kontrolleras direkt i databasen.
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -116,7 +116,13 @@ describe('AK1: registrera ett giltigt ärende (happy path)', () => {
     }
   });
 
-  it.todo('ärendet finns i listan (GET /api/arenden) – kräver Del 2:s listCases');
+  it('ärendet finns i listan (GET /api/arenden)', async () => {
+    const { body: sparat } = await registrera(validCase());
+
+    const { body: lista } = await server.api('GET', '/api/arenden');
+
+    expect(lista).toEqual([sparat]);
+  });
 });
 
 describe('AK2: obligatoriskt fält saknas (error path)', () => {

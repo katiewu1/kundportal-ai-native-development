@@ -1,17 +1,21 @@
 // ÄGARE: Del 2 (Backend – läsa och ändra)   PATCH /api/arenden/:arendenummer
-import { notImplemented } from '../errors.js';
-// import { updateCaseFields } from '../repository/updateCaseFields.js';
+import { NotFoundError } from '../errors.js';
+import { findCaseByNumber } from '../repository/findCaseByNumber.js';
+import { updateCaseFields } from '../repository/updateCaseFields.js';
+import { validateCaseChanges } from '../validation/caseChanges.js';
+import { dagensDatum } from './createCase.js';
 
 /**
  * AK14, AK15, AK16 – body innehåller de fält som ska ändras, t.ex. { "kategori": "Övrigt", "prioritet": 4 }.
  *
- * Att besluta och dokumentera:
- *   - AK16: avvisas eller ignoreras försök att ändra arendenummer/skapad? (specen tillåter båda)
- *   - Öppen fråga 2 i specen: får deadline ändras, och måste ett nytt datum ligga idag eller framåt?
- *   - Ändrar PATCH även status, eller bara via /status? (förslag: bara via /status)
+ * Besluten står i docs/API.md: arendenummer, skapad och status ignoreras här, och deadline får
+ * ändras till idag eller framåt.
  *
  * Ogiltig ändring → ValidationError, och inget sparas (AK15).
  */
-export function updateCase({ db, params, body }) {
-  notImplemented('Del 2: PATCH /api/arenden/:arendenummer (AK14, AK15, AK16)');
+export function updateCase({ db, now, params, body }) {
+  const sparat = findCaseByNumber(db, params.arendenummer);
+  if (!sparat) throw new NotFoundError();
+  const andringar = validateCaseChanges(body, sparat, dagensDatum(now()));
+  return { status: 200, body: updateCaseFields(db, params.arendenummer, andringar) };
 }

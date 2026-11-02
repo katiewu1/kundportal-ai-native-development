@@ -32,7 +32,7 @@ Alla svar är JSON (`Content-Type: application/json`). Fältnamn på svenska enl
 | PATCH | `/api/arenden/:arendenummer/status` | 2   | AK12, AK13 | `{ "status": "Pågående" }`                                   | `200` + ärendet           |
 | PATCH | `/api/arenden/:arendenummer`        | 2   | AK14–AK16  | de fält som ändras                                           | `200` + ärendet           |
 
-Ordningen i listan är inte bestämd i specen. Del 2 väljer och skriver det här.
+Listan är sorterad med det senast registrerade ärendet först.
 
 ## Felsvar
 
@@ -55,9 +55,11 @@ Gäller `POST /api/arenden` och återanvänds av Del 2 vid ändring. Källa: `ba
 | `rubrik`      | saknas eller enbart blanktecken       | `Rubrik måste fyllas i`                                               |
 | `rubrik`      | över 100 tecken                       | `Rubrik får vara högst 100 tecken`                                    |
 | `rubrik`      | inte text                             | `Rubrik måste vara text`                                              |
+| `rubrik`      | innehåller NUL-tecken                 | `Rubrik innehåller ogiltiga tecken`                                   |
 | `beskrivning` | saknas eller enbart blanktecken       | `Beskrivning måste fyllas i`                                          |
 | `beskrivning` | över 5000 tecken                      | `Beskrivning får vara högst 5000 tecken`                              |
 | `beskrivning` | inte text                             | `Beskrivning måste vara text`                                         |
+| `beskrivning` | innehåller NUL-tecken                 | `Beskrivning innehåller ogiltiga tecken`                              |
 | `kategori`    | saknas                                | `Kategori måste fyllas i`                                             |
 | `kategori`    | inte en av kategorierna               | `Kategori måste vara en av kategorierna i listan`                     |
 | `prioritet`   | saknas                                | `Prioritet måste fyllas i`                                            |
@@ -74,3 +76,15 @@ Gäller `POST /api/arenden` och återanvänds av Del 2 vid ändring. Källa: `ba
 - `rubrik` och `beskrivning` sparas utan blanktecken före och efter.
 - `arendenummer`, `skapad` och okända fält i `POST`-kroppen ignoreras: systemet sätter dem.
 - "Dagens datum" (AK7, AK8) och årtalet i `arendenummer` räknas i svensk tid, oavsett serverns tidszon.
+
+## Ändra ett ärende (Del 2)
+
+Gäller `PATCH /api/arenden/:arendenummer`. Källa: `backend/src/validation/caseChanges.js`, testade i `backend/tests/update.test.js`.
+
+- Bara de fält som skickas med ändras: `rubrik`, `beskrivning`, `kategori`, `prioritet` och `deadline`. Samma meddelanden som i tabellen ovan, och alla fel skickas tillsammans.
+- Är något fält ogiltigt sparas ingenting, inte heller de giltiga fälten (AK15).
+- `arendenummer`, `skapad` och okända fält ignoreras, samma som vid `POST` (AK16). Svaret är `200` och värdena är oförändrade.
+- `status` ändras bara via `/status` och ignoreras här.
+- **Deadline (förslag på öppen fråga 2 i specen, teamet behöver bekräfta):** deadline får ändras till idag eller framåt. Skickas samma deadline som redan är sparad kontrolleras den inte, och ett ärende med passerad deadline kan ändras i andra fält.
+- En kropp som inte är ett JSON-objekt (`null`, en lista, ett tal) ger `400`. En tom kropp räknas som en tom ändring och ger `200`.
+- Okänt ärendenummer ger `404` även om värdena är ogiltiga. Kroppen läses först, så trasig JSON ger alltid `400`.

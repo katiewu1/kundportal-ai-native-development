@@ -38,6 +38,8 @@ export function countChars(text) {
 function validateText(value, falt, max) {
   if (isBlank(value)) return `${falt} måste fyllas i`;
   if (typeof value !== 'string') return `${falt} måste vara text`;
+  // SQLite läser text bara fram till NUL. 'a\0b' skulle sparas men läsas tillbaka som 'a'.
+  if (value.includes('\0')) return `${falt} innehåller ogiltiga tecken`;
   if (countChars(value.trim()) > max) return `${falt} får vara högst ${max} tecken`;
   return null;
 }

@@ -1,7 +1,8 @@
 // ÄGARE: Del 2 (Backend – läsa och ändra)   PATCH /api/arenden/:arendenummer/status
-import { notImplemented } from '../errors.js';
-// import { validateStatus } from '../validation/fields.js';
-// import { updateCaseStatus } from '../repository/updateCaseStatus.js';
+import { NotFoundError, ValidationError } from '../errors.js';
+import { findCaseByNumber } from '../repository/findCaseByNumber.js';
+import { updateCaseStatus } from '../repository/updateCaseStatus.js';
+import { validateStatus } from '../validation/fields.js';
 
 /**
  * AK12, AK13 – body: { "status": "Pågående" }
@@ -9,5 +10,9 @@ import { notImplemented } from '../errors.js';
  * Okänt ärendenummer → NotFoundError.
  */
 export function updateStatus({ db, params, body }) {
-  notImplemented('Del 2: PATCH /api/arenden/:arendenummer/status (AK12, AK13)');
+  if (!findCaseByNumber(db, params.arendenummer)) throw new NotFoundError();
+  const status = body?.status;
+  const fel = validateStatus(status);
+  if (fel) throw new ValidationError({ status: fel });
+  return { status: 200, body: updateCaseStatus(db, params.arendenummer, status) };
 }
